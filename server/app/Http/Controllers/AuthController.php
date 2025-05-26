@@ -33,8 +33,6 @@ class AuthController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => "User registered successfully",
-                "access_token" => $token,
-                "token_type" => "Bearer",
                 "user" => $user
             ])->cookie($cookie);
         } catch (\Exception $e) {
@@ -68,8 +66,6 @@ class AuthController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => "Login successful",
-                "access_token" => $token,
-                "token_type" => "Bearer",
                 "user" => $user
             ])->cookie($cookie);
         } catch (\Exception $e) {

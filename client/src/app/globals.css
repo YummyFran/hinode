@@ -43,6 +43,13 @@ body {
   border-radius: 100px 100px 0 0;
 }
 
+.logo-sm {
+  --size: 1rem;
+  width: calc(var(--size) * 2);
+  height: var(--size);
+  border-radius: 100px 100px 0 0;
+}
+
 section {
   padding-top: 5rem;
 }

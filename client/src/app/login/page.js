@@ -1,10 +1,12 @@
 "use client"
 
 import { login } from "@/lib/authService";
+import { setAuth } from "@/store/authSlice";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IoArrowBackOutline } from 'react-icons/io5';
+import { useDispatch } from "react-redux";
 
 const capitalize = (str) => str && str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -22,6 +24,7 @@ export default function SignUp() {
         innerText: "Log in"
     })
     const router = useRouter()
+    const dispatch = useDispatch()
 
     const handleSubmit = async (e)=> {
         e.preventDefault()
@@ -48,6 +51,8 @@ export default function SignUp() {
             setSignUpButton(prev => ({...prev, disabled: false, innerText: "Log in"}))
             return
         }
+
+        dispatch(setAuth({ user: data }))
     
         setSignUpButton(prev => ({...prev, disabled: false, innerText: "Log in"}))
         router.push('/')
@@ -117,7 +122,7 @@ export default function SignUp() {
                         Password
                     </label>
                     }
-                <input value={credentials.password} onChange={e => handleChange(e)} type="password" name="password" id="password" placeholder="Create your password" 
+                <input value={credentials.password} onChange={e => handleChange(e)} type="password" name="password" id="password" placeholder="Enter your password" 
                     className={`w-full px-4 pb-2 outline-none no-focus text-base bg-transparent ${error.password ? 'text-red-500' : 'text-gray-700'}`}/>
                 </div>
                 <button disabled={signUpButton.disabled} type="submit" className="cursor-pointer bg-accent-gradient mt-4 text-white py-3 rounded-lg font-medium hover:brightness-95 disabled:opacity-50">

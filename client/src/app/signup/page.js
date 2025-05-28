@@ -1,10 +1,12 @@
 "use client"
 
 import { signUp } from "@/lib/authService";
+import { setAuth } from "@/store/authSlice";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IoArrowBackOutline } from 'react-icons/io5';
+import { useDispatch } from "react-redux";
 
 const capitalize = (str) => str && str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -24,6 +26,7 @@ export default function SignUp() {
         innerText: "Sign up"
     })
     const router = useRouter()
+    const dispatch = useDispatch()
 
     const handleSubmit = async (e)=> {
         e.preventDefault()
@@ -54,6 +57,8 @@ export default function SignUp() {
             setSignUpButton(prev => ({...prev, disabled: false, innerText: "Sign up"}))
             return
         }
+
+        dispatch(setAuth({ user: data }))
     
         setSignUpButton(prev => ({...prev, disabled: false, innerText: "Sign up"}))
         router.push('/')

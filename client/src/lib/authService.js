@@ -17,7 +17,7 @@ export async function signUp({ name, email, password }) {
         console.log(data)
         return [data, null]
     } catch(err) {
-        console.err(err)
+        console.error(err)
         return [null, err]
     }
 }
@@ -40,6 +40,8 @@ export async function login({ email, password }) {
 }
 
 export async function getAuthUser(jwt) {
+    if(!jwt) return { success: false }
+    
     try {
         const res = await fetch(`${API_URL}/user`, {
             method: 'GET',
@@ -70,7 +72,7 @@ export async function logout(jwt) {
             throw new Error("Logout failed")
         }
 
-        const data = res.json()
+        const data = await res.json()
         console.log(data)
         return data
     } catch(err) {

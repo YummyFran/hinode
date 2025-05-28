@@ -7,7 +7,6 @@ import Dashboard from "@/components/Dashboard/Dashboard";
 export default function Home() {
   const user = useSelector(state => state.auth.user)
   const success = user?.success
-  console.log("user", user)
   return (
     <div className="min-h-screen">
       {success ?

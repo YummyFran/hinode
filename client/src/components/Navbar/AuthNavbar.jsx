@@ -17,10 +17,6 @@ const AuthNavbar = () => {
             </Link>
             <NavLink href={"/"}>
                 <div className="icon w-6 aspect-square"></div>
-                Dashboard
-            </NavLink>
-            <NavLink href={"/projects"}>
-                <div className="icon w-6 aspect-square"></div>
                 Projects
             </NavLink>
             <NavLink href={"/todos"}>

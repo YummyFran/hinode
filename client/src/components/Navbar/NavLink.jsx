@@ -6,8 +6,8 @@ const NavLink = ({ href, children}) => {
     const pathname = usePathname();
 
     const linkClass = (path) =>
-        pathname === path
-            ? 'bg-gray-100 font-bold'
+        pathname === path || path === "/" && pathname === "/projects"
+            ? 'bg-accent-gradient text-white font-bold'
             : '';
   return (
     <Link href={href} className={`no-focus px-2 py-1 text-sm flex gap-2 items-center hover:bg-gray-100 rounded ${linkClass(href)}`}>

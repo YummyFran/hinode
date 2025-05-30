@@ -64,7 +64,8 @@ class AuthController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => "Login successful",
-                "user" => $user
+                "user" => $user,
+                "token" => $token
             ])->cookie($cookie);
         } catch (\Exception $e) {
             return response()->json([

@@ -13,7 +13,13 @@ class ProjectController extends Controller
     {
         return response()->json([
             'success' => true,
-            'projects' => Auth::user()->projects()->orderBy('updated_at', 'desc')->get()
+            'projects' => Project::with(['users' => function ($query) {
+                $query->select('users.id', 'name') // add more fields as needed
+                    ->withPivot('role', 'created_at', 'updated_at');
+            }])
+            ->whereHas('users', fn ($q) => $q->where('users.id', Auth::id()))
+            ->orderBy('updated_at', 'desc')
+            ->get()
         ], 200);
     }
 
@@ -40,4 +46,24 @@ class ProjectController extends Controller
             'project' => $project
         ], 201);
     }
+
+    public function show($id)
+    {
+        $project = Project::with([
+            'users' => function ($query) {
+                $query->select('users.id', 'name')
+                    ->withPivot('role', 'created_at', 'updated_at');
+            },
+            'lists.cards' // Eager load cards inside each list
+        ])
+        ->whereHas('users', fn($q) => $q->where('users.id', Auth::id()))
+        ->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Details for project " . $id,
+            'project' => $project
+        ]);
+    }
+
 }

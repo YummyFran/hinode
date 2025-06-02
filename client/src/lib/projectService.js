@@ -58,3 +58,47 @@ export async function getProjectById(id, token) {
         }
     }
 }
+
+export async function addList({ title, project_id }, token) {
+    try {
+        const res = await fetch(`${API_URL}/project/${project_id}/list`, {
+            method: "POST",
+            credentials: 'include',
+            headers: { 
+                'Content-Type': 'application/json',
+                // 'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ title })
+        })
+        const data = await res.json()
+
+        return data
+    } catch(err) {
+        console.error(err)
+        return {
+            success: false
+        }
+    }
+}
+
+export async function addCard({ title, description, list_id }, token) {
+    try {
+        const res = await fetch(`${API_URL}/list/${list_id}/card`, {
+            method: "POST",
+            credentials: 'include',
+            headers: { 
+                'Content-Type': 'application/json',
+                // 'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ title, description })
+        })
+        const data = await res.json()
+
+        return data
+    } catch(err) {
+        console.error(err)
+        return {
+            success: false
+        }
+    }
+}

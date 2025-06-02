@@ -65,7 +65,7 @@ const ProjectCardEmpty = ({ fetchProjects }) => {
           <label className='font-bold' htmlFor="description">Project Description</label>
           <input className='py-2 px-3 rounded' id="description" type="text" placeholder='A short description of your project' value={projectDetails.description} onChange={(e) => setProjectDetails(prev => ({...prev, description: e.target.value}))}/>
         </div>
-        <button className='bg-accent-gradient text-white p-2 rounded disabled:opacity-50' onClick={handleAddProject} disabled={submitting}>{submitting ? "Creating project" : "Create"}</button>
+        <button className='bg-accent-gradient text-white p-2 rounded disabled:opacity-50 cursor-pointer' onClick={handleAddProject} disabled={submitting}>{submitting ? "Creating project" : "Create"}</button>
       </Modal>
     </>
   )

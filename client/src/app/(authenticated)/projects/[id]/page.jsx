@@ -11,7 +11,7 @@ const Project = async ({ params }) => {
   return (
     <div className="bg-accent-gradient py-4 px-6 h-full">
         <h1 className="font-bold mb-4 text-white">{project.title}</h1>
-        <Lists lists={project.lists}/>
+        <Lists lists={project.lists} project_id={id} />
     </div>
   )
 }

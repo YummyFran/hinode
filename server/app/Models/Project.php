@@ -33,6 +33,6 @@ class Project extends Model
     }
 
     public function lists() {
-        return $this->hasMany(TaskList::class);
+        return $this->hasMany(TaskList::class)->orderBy('created_at');
     }
 }

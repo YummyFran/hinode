@@ -34,7 +34,7 @@ export async function login({ email, password }) {
 
         return [data, null]
     } catch(err) {
-        console.err(err)
+        console.error(err)
         return [null, err]
     }
 }
@@ -59,13 +59,12 @@ export async function getAuthUser(jwt) {
     }
 }
 
-export async function logout(jwt) {
+export async function logout() {
     try {
         console.log("logging out..")
         const res = await fetch(`${API_URL}/logout`, {
             method: 'POST',
             credentials: 'include',
-            headers: { 'Authorization': `Bearer ${jwt}` }
         })
 
         if(!res.ok) {

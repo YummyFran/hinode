@@ -6,12 +6,12 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 
-const LogoutBtn = ({ token }) => {
+const LogoutBtn = () => {
     const router = useRouter()
     const dispatch = useDispatch()
 
     const handleLogout = async () => {
-        await logout(token)
+        await logout()
         dispatch(clearAuth())
         router.push("/") // ⬅️ Redirect to homepage
     }

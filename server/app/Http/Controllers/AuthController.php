@@ -78,10 +78,20 @@ class AuthController extends Controller
 
     public function user()
     {
-        return response()->json([
-            "success" => true,
-            "user" => Auth::user()
-        ]);
+        try {
+            $user = Auth::user();
+
+            return response()->json([
+                "success" => true,
+                "user" => $user
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => "No user is currently authenticated",
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function logout(Request $request)

@@ -1,28 +1,35 @@
+"use client"
+
+import { timeAgo } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 const generateMemberLayout = (members = []) => {
     const count = members.length
 
-    if (count === 0) return ""
-    if (count === 1) return members[0]
-    if (count === 2) return `${members[0]} and ${members[1]}`
+    const getFirstName = (index) => members[index].name.split(" ")[0]
 
-    return `${members[0]}, and ${count - 1} others`
+    if (count === 0) return ""
+    if (count === 1) return getFirstName(0)
+    if (count === 2) return `${getFirstName(0)} and ${getFirstName(1)}`
+
+    return `${getFirstName(0)}, and ${count - 1} others`
 }
 
 const ProjectCard = ({ project: {
     id,
     title,
     description,
-    members,
+    users,
     created_at,
     updated_at,
     total_tasks,
     completed_tasks
 } }) => {
+    const router = useRouter()
   return (
     <div className='
-        cursor-pointer 
+        cursor-pointer
         w-64 
         bg-white
         aspect-square 
@@ -34,16 +41,18 @@ const ProjectCard = ({ project: {
         hover:shadow-md
         transition
         duration-200
-    '>
+    '
+        onClick={() => router.push(`/projects/${id}`)}    
+    >
         <div className='flex-1 bg-accent-gradient px-4 py-5'>
             <p className='font-black text-md mb-2 text-white'>{title}</p>
             <p className='font-normal text-xs text-gray-50 mb-auto'>{description}</p>
         </div>
         <div className='bg-white p-4'>
-            <p className='text-sm text-gray-600'>{`${completed_tasks}/${total_tasks} tasks completed`}</p>
+            <p className='text-sm text-gray-600'>{`${completed_tasks === 0 ? 'No' : `${completed_tasks}/${total_tasks}`} tasks completed ${completed_tasks === 0 && 'yet'}`}</p>
             <div className='flex justify-between mt-2'>
-                <p className='text-sm text-gray-500'>{generateMemberLayout(members)}</p>
-                <p className='text-sm text-gray-500'>{updated_at}</p>
+                <p className='text-sm text-gray-500'>{generateMemberLayout(users)}</p>
+                <p className='text-sm text-gray-500'>{timeAgo(updated_at)}</p>
             </div>
         </div>
     </div>

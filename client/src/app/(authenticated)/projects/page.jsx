@@ -18,7 +18,7 @@ const Projects = () => {
   }, [])
 
   return (
-    <div>
+    <div className=' py-4 px-6'>
       <h1 className='font-extrabold text-xl text-gray-700'>Projects</h1>
       <div className="project-cards py-6 flex gap-4 flex-wrap">
         {

@@ -53,3 +53,12 @@ body {
 section {
   padding-top: 5rem;
 }
+
+.scrollbar-hidden {
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; 
+}

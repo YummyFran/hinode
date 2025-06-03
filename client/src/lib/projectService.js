@@ -59,6 +59,23 @@ export async function getProjectById(id, token) {
     }
 }
 
+export async function deleteProject({ projectId }) {
+    try {
+        const res = await fetch(`${API_URL}/project/${projectId}`, {
+            method: "DELETE",
+            credentials: "include"
+        })
+        const data = await res.json()
+
+        return data
+    } catch(err) {
+        console.error(err)
+        return {
+            success: false
+        }
+    }
+}
+
 export async function addList({ title, project_id }, token) {
     try {
         const res = await fetch(`${API_URL}/project/${project_id}/list`, {

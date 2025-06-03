@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("project", [ProjectController::class, "index"]);
     Route::post("project", [ProjectController::class, "store"]);
     Route::get("project/{id}", [ProjectController::class, "show"]);
+    Route::delete('/project/{id}', [ProjectController::class, 'destroy']);
 
     Route::get("/project/{projectId}/list", [TaskListController::class, "index"]);
     Route::post("/project/{projectId}/list", [TaskListController::class, "store"]);

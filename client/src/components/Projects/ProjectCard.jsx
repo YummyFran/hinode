@@ -1,8 +1,9 @@
 "use client"
 
 import { timeAgo } from '@/lib/utils'
+import { useDraggable } from '@dnd-kit/core'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 const generateMemberLayout = (members = []) => {
     const count = members.length
@@ -27,21 +28,40 @@ const ProjectCard = ({ project: {
     completed_tasks
 } }) => {
     const router = useRouter()
+    const [isHydrated, setIsHydrated] = useState(false)
+
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
+        id
+    })
+
+    useEffect(() => {
+        setIsHydrated(true);
+    }, []);
+
+    const style = isHydrated && transform ? {
+        transform: `translate(${transform.x}px, ${transform.y}px)`
+    } : {};
+    
   return (
-    <div className='
-        cursor-pointer
-        w-64 
-        bg-white
-        aspect-square 
-        rounded-xl
-        flex
-        flex-col
-        overflow-hidden
-        hover:scale-101
-        hover:shadow-md
-        transition
-        duration-200
-    '
+    <div 
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
+        className='
+            cursor-pointer
+            w-64 
+            bg-white
+            aspect-square 
+            rounded-xl
+            flex
+            flex-col
+            overflow-hidden
+            hover:scale-101
+            hover:shadow-md
+            transition
+            duration-200
+        '
+        style={style}
         onClick={() => router.push(`/projects/${id}`)}    
     >
         <div className='flex-1 bg-accent-gradient px-4 py-5'>

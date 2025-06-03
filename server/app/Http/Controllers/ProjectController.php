@@ -66,4 +66,19 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function destroy($id)
+    {
+        $project = Project::whereHas('users', function ($q) {
+                $q->where('users.id', Auth::id())
+                ->where('role', 'owner'); 
+            })
+            ->findOrFail($id);
+
+        $project->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Project deleted successfully'
+        ]);
+    }
 }

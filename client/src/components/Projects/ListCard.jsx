@@ -12,7 +12,6 @@ const ListCard = ({ card, parent }) => {
         id: card.id + "__" + parent
     })
 
-
     useEffect(() => {
         setIsHydrated(true);
     }, []);

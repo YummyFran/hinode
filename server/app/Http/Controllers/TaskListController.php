@@ -41,4 +41,20 @@ class TaskListController extends Controller
             'list' => $list
         ]);
     }
+
+    public function destroy($projectId, $listId)
+    {
+        $project = Project::whereHas('users', fn ($q) => $q->where('users.id', Auth::id()))
+                        ->findOrFail($projectId);
+
+        $list = $project->lists()->where('id', $listId)->firstOrFail();
+
+        $list->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Task list deleted successfully'
+        ]);
+    }
+
 }

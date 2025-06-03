@@ -4,7 +4,7 @@ import { FaPlus } from "react-icons/fa6"
 import List from "./List"
 import { useEffect, useRef, useState } from "react"
 import Modal from "../Modal"
-import { addList, deleteCard, moveCard } from "@/lib/projectService"
+import { addList, deleteCard, deleteList, moveCard } from "@/lib/projectService"
 import { useRouter } from "next/navigation"
 import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core"
 import Delete from "./Delete"
@@ -46,17 +46,35 @@ const Lists = ({ lists:initialLists, project_id }) => {
         const newParent = over.id
         
         if(over.id === 'del-zone') {
+
+            if(oldParent === "list") {
+                const yes =  confirm("Are you sure you want to delete this list?")
+
+                if(!yes) return
+
+                setLists(prevLists => ([
+                    ...prevLists.filter(list => list.id !== cardId)
+                ]))
+
+                await deleteList({ projectId: project_id, listId: cardId})
+                return
+            }
+
+            const yes =  confirm("Are you sure you want to delete this card?")
+
+            if(!yes) return
+
             setLists(prevLists =>
                 prevLists.map(list => ({
-                ...list,
-                cards: list.cards.filter(card => card.id !== cardId),
+                    ...list,
+                    cards: list.cards.filter(card => card.id !== cardId),
                 }))
             )
             await deleteCard({cardId})
             return
         }
         
-        if(newParent === oldParent) return
+        if(newParent === oldParent || oldParent === "list") return
 
         moveCardInState(cardId, oldParent, newParent)
         await moveCard({ cardId, listId: newParent})

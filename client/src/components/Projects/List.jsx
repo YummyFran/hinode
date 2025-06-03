@@ -5,19 +5,37 @@ import dynamic from "next/dynamic";
 const ListCard = dynamic(() => import("./ListCard"), { ssr: false });
 // import ListCard from "./ListCard"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Modal from "../Modal"
 import { addCard } from "@/lib/projectService"
-import { useDroppable } from "@dnd-kit/core"
+import { useDraggable, useDroppable } from "@dnd-kit/core"
+
+function mergeRefs(...refs) {
+    return (node) => {
+        for (let ref of refs) {
+            if (typeof ref === 'function') {
+                ref(node)
+            } else if (ref != null) {
+                ref.current = node
+            }
+        }
+    }
+}
 
 const List = ({ list }) => {    
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [cardDetails, setCardDetails] = useState({ title: "", description: "" })
     const [submitting, setSubmitting] = useState(false)
+    const [isHydrated, setIsHydrated] = useState(false);
+
     const router = useRouter()
 
     const {setNodeRef} = useDroppable({
         id: list.id
+    })
+
+    const { attributes, listeners, setNodeRef: setDraggableNodeRef, transform } = useDraggable({
+        id: list.id + "__" + "list"
     })
 
     const handleAddCard = async () => {
@@ -29,8 +47,22 @@ const List = ({ list }) => {
         router.refresh()
     }
 
+    useEffect(() => {
+        setIsHydrated(true);
+    }, []);
+
+    const style = isHydrated && transform ? {
+        transform: `translate(${transform.x}px, ${transform.y}px)`
+    } : {};
+
   return (
-    <div ref={setNodeRef} className="bg-gray-100 shadow-md w-64 rounded-lg h-fit p-2 flex flex-col gap-2 cursor-pointer shrink-0 select-text">
+    <div 
+        ref={mergeRefs(setNodeRef, setDraggableNodeRef)} 
+        {...attributes}
+        {...listeners}
+        className="bg-gray-100 shadow-md w-64 rounded-lg h-fit p-2 flex flex-col gap-2 cursor-pointer shrink-0 select-text"
+        style={style}
+    >
         <h2 className="font-bold px-2">{list.title}</h2>
         <div className="flex flex-col gap-2">
         {

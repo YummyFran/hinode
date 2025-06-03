@@ -81,6 +81,23 @@ export async function addList({ title, project_id }, token) {
     }
 }
 
+export async function deleteList({ projectId, listId }) {
+    try {
+        const res = await fetch(`${API_URL}/project/${projectId}/list/${listId}`, {
+            method: "DELETE",
+            credentials: 'include'
+        })
+        const data = await res.json()
+
+        return data
+    } catch(err) {
+        console.error(err)
+        return {
+            success: false
+        }
+    }
+}
+
 export async function addCard({ title, description, list_id }, token) {
     try {
         const res = await fetch(`${API_URL}/list/${list_id}/card`, {

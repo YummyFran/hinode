@@ -1,17 +1,23 @@
 "use client"
 
 import { FaPlus } from "react-icons/fa6"
-import ListCard from "./ListCard"
+import dynamic from "next/dynamic";
+const ListCard = dynamic(() => import("./ListCard"), { ssr: false });
+// import ListCard from "./ListCard"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import Modal from "../Modal"
 import { addCard } from "@/lib/projectService"
+import { useDroppable } from "@dnd-kit/core"
 
 const List = ({ list }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [cardDetails, setCardDetails] = useState({ title: "", description: "" })
     const [submitting, setSubmitting] = useState(false)
     const router = useRouter()
+    const {setNodeRef} = useDroppable({
+        id: list.id
+    })
 
     const handleAddCard = async () => {
         setSubmitting(true)
@@ -23,13 +29,15 @@ const List = ({ list }) => {
     }
 
   return (
-    <div className="bg-gray-100 shadow-md w-64 rounded-lg h-fit p-2 flex flex-col gap-2 cursor-pointer">
+    <div ref={setNodeRef} className="bg-gray-100 shadow-md w-64 rounded-lg h-fit p-2 flex flex-col gap-2 cursor-pointer shrink-0 select-text">
         <h2 className="font-bold px-2">{list.title}</h2>
+        <div className="flex flex-col gap-2">
         {
             list.cards.map(card => (
                 <ListCard card={card} key={card.id}/>
             ))
         }
+        </div>
         <div className="text-sm text-gray-400 px-2 flex gap-1 mt-2 items-center"
             onClick={() => setIsModalOpen(true)}
         >

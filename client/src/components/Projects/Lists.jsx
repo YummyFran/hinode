@@ -2,16 +2,34 @@
 
 import { FaPlus } from "react-icons/fa6"
 import List from "./List"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Modal from "../Modal"
-import { addList } from "@/lib/projectService"
+import { addList, moveCard } from "@/lib/projectService"
 import { useRouter } from "next/navigation"
+import { DndContext } from "@dnd-kit/core"
 
 const Lists = ({ lists, project_id }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [listTitle, setListTitle] = useState("")
     const [submitting, setSubmitting] = useState(false)
     const router = useRouter()
+
+    const scrollRef = useRef(null)
+    let isDown = false
+    let startX
+    let scrollLeft
+
+    const handleDragEnd = async (e) => {
+        const {active, over} = e
+
+        if(!over) return
+
+        const cardId = active.id
+        const newParent = over.id
+
+        await moveCard({ cardId, listId: newParent})
+        router.refresh()
+    }
 
     const handleAddList = async () => {
         setSubmitting(true)
@@ -22,14 +40,60 @@ const Lists = ({ lists, project_id }) => {
         router.refresh()
     }
 
-  return (
-    <div className="w-full h-auto overflow-auto flex gap-2">
-        {
-            lists.map(list => (
-                <List list={list} key={list.id}/>
-            ))
+    useEffect(() => {
+        const slider = scrollRef.current
+
+        const mouseDownHandler = (e) => {
+            if (e.target !== slider) return
+            
+            isDown = true
+            slider.classList.add("active")
+            startX = e.pageX - slider.offsetLeft
+            scrollLeft = slider.scrollLeft
         }
-        <div className="w-64 bg-white/40 py-2 px-4 h-fit rounded-lg text-white flex gap-1 items-center shadow-md cursor-pointer"
+
+        const mouseLeaveHandler = () => {
+            isDown = false
+            slider.classList.remove("active")
+        }
+
+        const mouseUpHandler = () => {
+            isDown = false
+            slider.classList.remove("active")
+        }
+
+        const mouseMoveHandler = (e) => {
+            if (!isDown) return
+            e.preventDefault()
+            const x = e.pageX - slider.offsetLeft
+            const walk = (x - startX) * 1.5 // scroll-fast multiplier
+            slider.scrollLeft = scrollLeft - walk
+        }
+
+        slider.addEventListener("mousedown", mouseDownHandler)
+        slider.addEventListener("mouseleave", mouseLeaveHandler)
+        slider.addEventListener("mouseup", mouseUpHandler)
+        slider.addEventListener("mousemove", mouseMoveHandler)
+
+        return () => {
+            slider.removeEventListener("mousedown", mouseDownHandler)
+            slider.removeEventListener("mouseleave", mouseLeaveHandler)
+            slider.removeEventListener("mouseup", mouseUpHandler)
+            slider.removeEventListener("mousemove", mouseMoveHandler)
+        }
+    }, [])
+
+  return (
+    <div className=" w-full h-full overflow-auto flex gap-2 scrollbar-hidden cursor-grab active:cursor-grabbing select-none" ref={scrollRef}>
+        <DndContext onDragEnd={handleDragEnd}>
+            {
+                lists.map(list => (
+                    <List list={list} key={list.id}/>
+                ))
+            }
+        </DndContext>
+
+        <div className="w-64 bg-white/40 py-2 px-4 h-fit rounded-lg text-white flex gap-1 items-center shadow-md cursor-pointer shrink-0"
             onClick={() => setIsModalOpen(true)}
         >
             <FaPlus />

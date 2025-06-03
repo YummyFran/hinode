@@ -102,3 +102,24 @@ export async function addCard({ title, description, list_id }, token) {
         }
     }
 }
+
+export async function moveCard({ cardId, listId }) {
+    try {
+        const res = await fetch(`${API_URL}/cards/${cardId}/move`, {
+            method: "PUT",
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ listId })
+        })
+        const data = await res.json()
+
+        return data
+    } catch(err) {
+        console.error(err)
+        return {
+            success: false
+        }
+    }
+}

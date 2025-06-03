@@ -1,14 +1,17 @@
 "use client"
 
 import { useDraggable } from "@dnd-kit/core"
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Modal from "../Modal";
 
-const ListCard = ({ card }) => {
+const ListCard = ({ card, parent }) => {
     const [isHydrated, setIsHydrated] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
-        id: card.id
+        id: card.id + "__" + parent
     })
+
 
     useEffect(() => {
         setIsHydrated(true);
@@ -19,10 +22,27 @@ const ListCard = ({ card }) => {
     } : {};
 
   return (
-    <div ref={setNodeRef} {...listeners} {...attributes} className="bg-white p-2 rounded-lg shadow-sm" style={style}>
-        <h3 className="font-semibold text-gray-700">{card.title}</h3>
-        <p>{card.description}</p>
-    </div>
+    <>
+        <div 
+            ref={setNodeRef} 
+            {...listeners} 
+            {...attributes} 
+            className="bg-white p-2 rounded-lg shadow-sm" 
+            style={style}
+            onClick={() => setIsModalOpen(true)}
+        >
+            <h3 className="font-semibold text-gray-700">{card.title}</h3>
+            <p className="overflow-hidden text-ellipsis text-gray-600">{card.description}</p>
+        </div>
+        <Modal
+            title={card.title}
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            className={'flex text-wrap'}
+        >
+            <p className="text-wrap overflow-wrap wrap-break-word w-full">{card.description}</p>
+        </Modal>
+    </>
   )
 }
 

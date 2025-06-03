@@ -34,7 +34,7 @@ const List = ({ list }) => {
         <div className="flex flex-col gap-2">
         {
             list.cards.map(card => (
-                <ListCard card={card} key={card.id}/>
+                <ListCard card={card} key={card.id} parent={list.id}/>
             ))
         }
         </div>

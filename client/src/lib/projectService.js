@@ -123,3 +123,20 @@ export async function moveCard({ cardId, listId }) {
         }
     }
 }
+
+export async function deleteCard({ cardId }) {
+    try {
+        const res = await fetch(`${API_URL}/cards/${cardId}`, {
+            method: "DELETE",
+            credentials: 'include'
+        })
+        const data = await res.json()
+
+        return data
+    } catch(err) {
+        console.error(err)
+        return {
+            success: false
+        }
+    }
+}

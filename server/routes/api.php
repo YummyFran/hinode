@@ -27,4 +27,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/list/{listId}/card', [CardController::class, 'store']);
 
     Route::put('/cards/{card}/move', [CardController::class, 'moveCard']);
+    Route::delete('/cards/{cardId}', [CardController::class, 'destroy']);
+
 });

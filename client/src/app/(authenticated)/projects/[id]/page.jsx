@@ -9,7 +9,7 @@ const Project = async ({ params }) => {
     const {project} = await getProjectById(id, token)
    
   return (
-    <div className="bg-accent-gradient py-4 px-6 h-full">
+    <div className="bg-accent-gradient py-4 px-6 h-full flex flex-col max-h-screen">
         <h1 className="font-bold mb-4 text-white">{project.title}</h1>
         <Lists lists={project.lists} project_id={id} />
     </div>

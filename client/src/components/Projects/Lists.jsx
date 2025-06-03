@@ -4,15 +4,18 @@ import { FaPlus } from "react-icons/fa6"
 import List from "./List"
 import { useEffect, useRef, useState } from "react"
 import Modal from "../Modal"
-import { addList, moveCard } from "@/lib/projectService"
+import { addList, deleteCard, moveCard } from "@/lib/projectService"
 import { useRouter } from "next/navigation"
 import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core"
+import Delete from "./Delete"
 
 const Lists = ({ lists:initialLists, project_id }) => {
     const [lists, setLists] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [listTitle, setListTitle] = useState("")
     const [submitting, setSubmitting] = useState(false)
+    const [isDragging, setIsDragging] = useState(false)
+    const [onDeleteHover, setOnDeleteHover] = useState(false)
     const router = useRouter()
 
     const scrollRef = useRef(null)
@@ -26,19 +29,47 @@ const Lists = ({ lists:initialLists, project_id }) => {
         })
     )
 
+    const handleDragStart = async (e) => {
+        setIsDragging(true)
+    }
+
     const handleDragEnd = async (e) => {
         const {active, over} = e
 
+        setIsDragging(false)
+
         if(!over) return
 
+        
         const cardId = active.id.split("__")[0]
         const oldParent = active.id.split("__")[1]
         const newParent = over.id
-
+        
+        if(over.id === 'del-zone') {
+            setLists(prevLists =>
+                prevLists.map(list => ({
+                ...list,
+                cards: list.cards.filter(card => card.id !== cardId),
+                }))
+            )
+            await deleteCard({cardId})
+            return
+        }
+        
         if(newParent === oldParent) return
 
         moveCardInState(cardId, oldParent, newParent)
         await moveCard({ cardId, listId: newParent})
+    }
+
+    const handleDragOver = async (e) => {
+        const { over } = e
+
+        if (over && over.id === 'del-zone') {
+            setOnDeleteHover(true)
+        } else {
+            setOnDeleteHover(false)
+        }
     }
 
     const handleAddList = async () => {
@@ -147,13 +178,15 @@ const Lists = ({ lists:initialLists, project_id }) => {
     }, [])
 
   return (
-    <div className=" w-full h-full overflow-auto flex gap-2 scrollbar-hidden cursor-grab active:cursor-grabbing select-none" ref={scrollRef}>
-        <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
+    <div className="w-full flex-1 overflow-auto flex gap-2 scrollbar-hidden cursor-grab active:cursor-grabbing select-none" ref={scrollRef}>
+        <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragOver={handleDragOver} sensors={sensors}>
             {
                 lists?.map(list => (
                     <List list={list} key={list.id}/>
                 ))
+                
             }
+            { isDragging && <Delete onDeleteHover={onDeleteHover} />}
         </DndContext>
 
         <div className="w-64 bg-white/40 py-2 px-4 h-fit rounded-lg text-white flex gap-1 items-center shadow-md cursor-pointer shrink-0"

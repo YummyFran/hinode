@@ -10,11 +10,12 @@ import Modal from "../Modal"
 import { addCard } from "@/lib/projectService"
 import { useDroppable } from "@dnd-kit/core"
 
-const List = ({ list }) => {
+const List = ({ list }) => {    
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [cardDetails, setCardDetails] = useState({ title: "", description: "" })
     const [submitting, setSubmitting] = useState(false)
     const router = useRouter()
+
     const {setNodeRef} = useDroppable({
         id: list.id
     })

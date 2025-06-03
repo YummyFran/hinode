@@ -32,7 +32,7 @@ const ListCard = ({ card, parent }) => {
             onClick={() => setIsModalOpen(true)}
         >
             <h3 className="font-semibold text-gray-700">{card.title}</h3>
-            <p className="overflow-hidden text-ellipsis text-gray-600">{card.description}</p>
+            <p className="overflow-hidden text-ellipsis text-gray-600 line-clamp-2">{card.description}</p>
         </div>
         <Modal
             title={card.title}

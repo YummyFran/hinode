@@ -83,4 +83,31 @@ class CardController extends Controller
             'card' => $card
         ]);
     }
+
+    public function destroy($cardId)
+    {
+        $card = Card::findOrFail($cardId);
+
+        // Optional: Check if the authenticated user is a member of the project
+        $project = $card->list->project ?? null;
+
+        if ($project) {
+            $isMember = DB::table('project_user')
+                ->where('project_id', $project->id)
+                ->where('user_id', Auth::id())
+                ->exists();
+
+            if (! $isMember) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
+            }
+        }
+
+        $card->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Card deleted successfully'
+        ]);
+    }
+
 }

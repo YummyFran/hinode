@@ -6,9 +6,10 @@ import { useEffect, useRef, useState } from "react"
 import Modal from "../Modal"
 import { addList, moveCard } from "@/lib/projectService"
 import { useRouter } from "next/navigation"
-import { DndContext } from "@dnd-kit/core"
+import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core"
 
-const Lists = ({ lists, project_id }) => {
+const Lists = ({ lists:initialLists, project_id }) => {
+    const [lists, setLists] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [listTitle, setListTitle] = useState("")
     const [submitting, setSubmitting] = useState(false)
@@ -19,16 +20,25 @@ const Lists = ({ lists, project_id }) => {
     let startX
     let scrollLeft
 
+    const sensors = useSensors(
+        useSensor(MouseSensor, {
+            activationConstraint: { distance: 5 }
+        })
+    )
+
     const handleDragEnd = async (e) => {
         const {active, over} = e
 
         if(!over) return
 
-        const cardId = active.id
+        const cardId = active.id.split("__")[0]
+        const oldParent = active.id.split("__")[1]
         const newParent = over.id
 
+        if(newParent === oldParent) return
+
+        moveCardInState(cardId, oldParent, newParent)
         await moveCard({ cardId, listId: newParent})
-        router.refresh()
     }
 
     const handleAddList = async () => {
@@ -39,6 +49,59 @@ const Lists = ({ lists, project_id }) => {
         setSubmitting(false)
         router.refresh()
     }
+
+    const moveCardInState = (cardId, fromListId, toListId, position = null) => {
+        setLists((prevLists) => {
+            // Deep clone the lists to avoid mutating state directly
+            const listsCopy = prevLists.map(list => ({
+            ...list,
+            cards: [...list.cards]
+            }));
+
+            // Find source and target lists
+            const fromList = listsCopy.find(list => list.id === fromListId);
+            const toList = listsCopy.find(list => list.id === toListId);
+
+            if (!fromList || !toList) {
+            console.warn("List not found");
+            return prevLists;
+            }
+
+            // Find the card to move and remove it from the source list
+            const cardIndex = fromList.cards.findIndex(card => card.id === cardId);
+            if (cardIndex === -1) {
+            console.warn("Card not found in source list");
+            return prevLists;
+            }
+
+            const [cardToMove] = fromList.cards.splice(cardIndex, 1);
+
+            // Update the card's task_list_id to the new list id
+            cardToMove.task_list_id = toListId;
+
+            // Insert card into target list at the specified position or at the end
+            if (position === null || position > toList.cards.length) {
+            toList.cards.push(cardToMove);
+            } else {
+            toList.cards.splice(position, 0, cardToMove);
+            }
+
+            // Optional: Recalculate positions if you want them to be consistent
+            toList.cards = toList.cards.map((card, index) => ({
+            ...card,
+            position: index + 1,
+            }));
+
+            // You could also update positions in fromList if you want
+
+            return listsCopy;
+        });
+    };
+
+
+    useEffect(() => {
+        setLists(initialLists)
+    }, [initialLists])
 
     useEffect(() => {
         const slider = scrollRef.current
@@ -85,9 +148,9 @@ const Lists = ({ lists, project_id }) => {
 
   return (
     <div className=" w-full h-full overflow-auto flex gap-2 scrollbar-hidden cursor-grab active:cursor-grabbing select-none" ref={scrollRef}>
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
             {
-                lists.map(list => (
+                lists?.map(list => (
                     <List list={list} key={list.id}/>
                 ))
             }

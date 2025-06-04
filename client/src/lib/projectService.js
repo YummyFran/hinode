@@ -200,6 +200,27 @@ export async function moveCard({ cardId, listId }) {
     }
 }
 
+export async function updateCard({ title, description, cardId }) {
+    try {
+        const res = await fetch(`${API_URL}/cards/${cardId}`, {
+            method: "PUT",
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title, description })
+        })
+        const data = await res.json()
+
+        return data
+    } catch(err) {
+        console.error(err)
+        return {
+            success: false
+        }
+    }
+}
+
 export async function deleteCard({ cardId }) {
     try {
         const res = await fetch(`${API_URL}/cards/${cardId}`, {

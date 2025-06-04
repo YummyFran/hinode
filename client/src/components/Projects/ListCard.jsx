@@ -63,7 +63,7 @@ const ListCard = ({ card, parent }) => {
                 isEditting.description ?
                     <textarea className="w-full field-sizing-content" type="text" value={details.description} onChange={e => setDetails(prev => ({...prev, description: e.target.value}))} onBlur={() => handleSave(prev => ({...prev, description: false}))} autoFocus></textarea>
                 :
-                    <p className="text-wrap overflow-wrap wrap-break-word w-full" onClick={() => setIsEditting(prev => ({...prev, description: true}))}>{details.description}</p>
+                    <p className="text-wrap overflow-wrap wrap-break-word w-full whitespace-pre-line" onClick={() => setIsEditting(prev => ({...prev, description: true}))}>{details.description}</p>
             }
         </Modal>
     </>

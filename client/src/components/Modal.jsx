@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-export default function Modal({ isOpen, onClose, title, children, className, titleEditable, isEditting, setIsEditting, details, setDetails, handleSave }) {
+export default function Modal({ isOpen, onClose, title, children, className,        titleEditable, isEditting, setIsEditting, details, setDetails, handleSave }) {
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') onClose();

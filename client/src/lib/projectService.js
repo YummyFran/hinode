@@ -80,6 +80,46 @@ export async function updateProject({ title, description, projectId }) {
     }
 }
 
+export async function addMember({ email, projectId }) {
+    try {
+        const res = await fetch(`${API_URL}/project/${projectId}/member`, {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email })
+        })
+        const data = res.json()
+
+        return data
+    } catch (err) {
+        console.error(err)
+        return {
+            success: false,
+            message: err.message
+        }
+    }
+}
+
+export async function removeMember({ userId, projectId}) {
+    try {
+        const res = await fetch(`${API_URL}/project/${projectId}/member/${userId}`, {
+            method: "DELETE",
+            credentials: 'include'
+        })
+        const data = await res.json()
+        
+        return data
+    } catch(err) {
+        console.error(err)
+        return {
+            success: false,
+            message: err.message
+        }
+    }
+}
+
 export async function deleteProject({ projectId }) {
     try {
         const res = await fetch(`${API_URL}/project/${projectId}`, {

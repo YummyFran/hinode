@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ProjectController extends Controller
 {
@@ -109,4 +110,61 @@ class ProjectController extends Controller
             'message' => 'Project deleted successfully'
         ]);
     }
+
+    public function addMember(Request $request, $projectId)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        // Get the user by email
+        $user = User::where('email', $request->email)->firstOrFail();
+
+        // Only owners can add members
+        $project = Project::whereHas('users', function ($q) {
+            $q->where('users.id', Auth::id())
+            ->where('role', 'owner');
+        })->findOrFail($projectId);
+
+        // Prevent adding the same user twice
+        if ($project->users()->where('users.id', $user->id)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User is already a member of this project.'
+            ], 409);
+        }
+
+        $project->users()->attach($user->id, ['role' => 'member']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Member added successfully.',
+            'user' => $user,
+        ]);
+    }
+
+    public function removeMember(Request $request, $projectId, $userId)
+    {
+        $project = Project::whereHas('users', function ($q) {
+                $q->where('users.id', Auth::id())
+                ->where('role', 'owner'); // Only owners can remove members
+            })
+            ->findOrFail($projectId);
+
+        if ($userId == Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot remove yourself as a member.'
+            ], 400);
+        }
+
+        // Detach the user from the project
+        $project->users()->detach($userId);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Member removed successfully.'
+        ]);
+    }
+
 }

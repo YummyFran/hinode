@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-export default function Modal({ isOpen, onClose, title, children, className }) {
+export default function Modal({ isOpen, onClose, title, children, className, titleEditable, isEditting, setIsEditting, details, setDetails, handleSave }) {
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') onClose();
@@ -30,7 +30,15 @@ export default function Modal({ isOpen, onClose, title, children, className }) {
         >
           &times;
         </button>
-        {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
+        {
+          titleEditable ? (
+            isEditting ? 
+                <input className="text-xl font-semibold mb-4 w-full" type="text" value={details.title} onChange={e => setDetails(prev => ({...prev, title: e.target.value}))} onBlur={() => handleSave(prev => ({...prev, title: false}))} autoFocus/>
+            :
+                <h2 className="text-xl font-semibold mb-4 wrap-break-word" onClick={() => setIsEditting(prev => ({...prev, title: true}))}>{title}</h2>
+          ) : 
+          <h2 className="text-xl font-semibold mb-4 wrap-break-word">{title}</h2>
+        }
         <div className={`text-sm text-gray-700 dark:text-gray-300 ${className} overflow-auto`}>{children}</div>
       </div>
     </div>,

@@ -84,6 +84,41 @@ class CardController extends Controller
         ]);
     }
 
+    public function update(Request $request, $cardId)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $card = Card::with('list.project')->findOrFail($cardId);
+
+        // Check if authenticated user is a member of the project
+        $project = $card->list->project ?? null;
+
+        if ($project) {
+            $isMember = DB::table('project_user')
+                ->where('project_id', $project->id)
+                ->where('user_id', Auth::id())
+                ->exists();
+
+            if (! $isMember) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
+            }
+        }
+
+        $card->update([
+            'title' => $request->title,
+            'description' => $request->description,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Card updated successfully',
+            'card' => $card
+        ]);
+    }
+
     public function destroy($cardId)
     {
         $card = Card::findOrFail($cardId);

@@ -30,7 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/list/{listId}/card', [CardController::class, 'index']);
     Route::post('/list/{listId}/card', [CardController::class, 'store']);
 
-    Route::put('/cards/{card}/move', [CardController::class, 'moveCard']);
+    Route::put('/cards/{cardId}/move', [CardController::class, 'moveCard']);
+    Route::put('/cards/{cardId}', [CardController::class, 'update']);
     Route::delete('/cards/{cardId}', [CardController::class, 'destroy']);
 
 });

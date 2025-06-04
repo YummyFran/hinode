@@ -66,6 +66,34 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        // Ensure the authenticated user is the project owner
+        $project = Project::whereHas('users', function ($q) {
+                $q->where('users.id', Auth::id())
+                ->where('role', 'owner');
+            })
+            ->findOrFail($id);
+
+        // Update title and description
+        $project->update([
+            'title' => $request->title,
+            'description' => $request->description,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Project updated successfully',
+            'project' => $project,
+        ]);
+    }
+
+
     public function destroy($id)
     {
         $project = Project::whereHas('users', function ($q) {

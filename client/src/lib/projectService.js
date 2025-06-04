@@ -97,7 +97,7 @@ export async function deleteProject({ projectId }) {
     }
 }
 
-export async function addList({ title, project_id }, token) {
+export async function addList({ title, project_id }) {
     try {
         const res = await fetch(`${API_URL}/project/${project_id}/list`, {
             method: "POST",
@@ -105,6 +105,27 @@ export async function addList({ title, project_id }, token) {
             headers: { 
                 'Content-Type': 'application/json',
                 // 'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ title })
+        })
+        const data = await res.json()
+
+        return data
+    } catch(err) {
+        console.error(err)
+        return {
+            success: false
+        }
+    }
+}
+
+export async function updateList({ title, project_id, list_id }) {
+    try {
+        const res = await fetch(`${API_URL}/project/${project_id}/list/${list_id}`, {
+            method: "PUT",
+            credentials: 'include',
+            headers: { 
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({ title })
         })

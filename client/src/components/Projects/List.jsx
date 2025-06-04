@@ -7,7 +7,7 @@ const ListCard = dynamic(() => import("./ListCard"), { ssr: false });
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Modal from "../Modal"
-import { addCard } from "@/lib/projectService"
+import { addCard, updateList } from "@/lib/projectService"
 import { useDraggable, useDroppable } from "@dnd-kit/core"
 
 function mergeRefs(...refs) {
@@ -22,9 +22,10 @@ function mergeRefs(...refs) {
     }
 }
 
-const List = ({ list }) => {    
+const List = ({ list, project_id }) => {    
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [cardDetails, setCardDetails] = useState({ title: "", description: "" })
+    const [listDetails, setListDetails] = useState({ title: list.title, isEditting: false })
     const [submitting, setSubmitting] = useState(false)
     const [isHydrated, setIsHydrated] = useState(false);
 
@@ -47,6 +48,12 @@ const List = ({ list }) => {
         router.refresh()
     }
 
+    const handleSave = async () => {
+        setListDetails(prev => ({...prev, isEditting: false}))
+
+        await updateList({ title: listDetails.title, project_id, list_id: list.id })
+    }
+
     useEffect(() => {
         setIsHydrated(true);
     }, []);
@@ -63,7 +70,12 @@ const List = ({ list }) => {
         className="bg-gray-100 shadow-md w-64 rounded-lg h-fit p-2 flex flex-col gap-2 cursor-pointer shrink-0 select-text"
         style={style}
     >
-        <h2 className="font-bold px-2">{list.title}</h2>
+        {
+            listDetails.isEditting ?
+                <input className="font-bold px-2" type="text" value={listDetails.title} onChange={e => setListDetails(prev => ({...prev, title: e.target.value}))} onBlur={() => handleSave()} autoFocus/>
+            :
+                <h2 className="font-bold px-2 wrap-break-word" onClick={() => setListDetails(prev => ({...prev, isEditting: true}))}>{listDetails.title}</h2>
+        }
         <div className="flex flex-col gap-2">
         {
             list.cards.map(card => (

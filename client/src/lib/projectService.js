@@ -59,6 +59,27 @@ export async function getProjectById(id, token) {
     }
 }
 
+export async function updateProject({ title, description, projectId }) {
+    try {
+        const res = await fetch(`${API_URL}/project/${projectId}`, {
+            method: "PUT",
+            credentials: 'include',
+            headers: { 
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title, description })
+        })
+        const data = await res.json()
+
+        return data
+    } catch(err) {
+        console.error(err)
+        return {
+            success: false
+        }
+    }
+}
+
 export async function deleteProject({ projectId }) {
     try {
         const res = await fetch(`${API_URL}/project/${projectId}`, {

@@ -72,7 +72,7 @@ const List = ({ list, project_id }) => {
     >
         {
             listDetails.isEditting ?
-                <input className="font-bold px-2" type="text" value={listDetails.title} onChange={e => setListDetails(prev => ({...prev, title: e.target.value}))} onBlur={() => handleSave()} autoFocus/>
+                <input className="font-bold px-2 field-sizing-content" type="text" value={listDetails.title} onChange={e => setListDetails(prev => ({...prev, title: e.target.value}))} onBlur={() => handleSave()} autoFocus/>
             :
                 <h2 className="font-bold px-2 wrap-break-word" onClick={() => setListDetails(prev => ({...prev, isEditting: true}))}>{listDetails.title}</h2>
         }
@@ -103,7 +103,7 @@ const List = ({ list, project_id }) => {
             </div>
             <div className="group flex flex-col gap-1">
                 <label className='font-bold' htmlFor="description">Card description</label>
-                <textarea className='py-2 px-3 rounded' id="description" type="text" placeholder='Your project title' value={cardDetails.description} onChange={(e) => setCardDetails(prev => ({...prev, description: e.target.value}))}></textarea>
+                <textarea className='py-2 px-3 rounded field-sizing-content' id="description" type="text" placeholder='Your project title' value={cardDetails.description} onChange={(e) => setCardDetails(prev => ({...prev, description: e.target.value}))}></textarea>
             </div>
             <button className='bg-accent-gradient text-white p-2 rounded disabled:opacity-50 cursor-pointer' onClick={handleAddCard} disabled={submitting}>{submitting ? "Creating card" : "Create"}</button>
         </Modal>

@@ -20,3 +20,15 @@ export function timeAgo(timestamp) {
     const yearsAgo = Math.floor(monthsAgo / 12)
     return `${yearsAgo} year${yearsAgo !== 1 ? 's' : ''} ago`
 }
+
+export const generateMemberLayout = (members = []) => {
+    const count = members.length
+
+    const getFirstName = (index) => members[index].name.split(" ")[0]
+
+    if (count === 0) return ""
+    if (count === 1) return getFirstName(0)
+    if (count === 2) return `${getFirstName(0)} and ${getFirstName(1)}`
+
+    return `${getFirstName(0)}, and ${count - 1} others`
+}

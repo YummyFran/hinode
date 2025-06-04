@@ -4,18 +4,7 @@ import { timeAgo } from '@/lib/utils'
 import { useDraggable } from '@dnd-kit/core'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-
-const generateMemberLayout = (members = []) => {
-    const count = members.length
-
-    const getFirstName = (index) => members[index].name.split(" ")[0]
-
-    if (count === 0) return ""
-    if (count === 1) return getFirstName(0)
-    if (count === 2) return `${getFirstName(0)} and ${getFirstName(1)}`
-
-    return `${getFirstName(0)}, and ${count - 1} others`
-}
+import { generateMemberLayout } from '@/lib/utils'
 
 const ProjectCard = ({ project: {
     id,

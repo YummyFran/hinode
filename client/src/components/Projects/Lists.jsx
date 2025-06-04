@@ -200,7 +200,7 @@ const Lists = ({ lists:initialLists, project_id }) => {
         <DndContext onDragEnd={handleDragEnd} onDragStart={handleDragStart} onDragOver={handleDragOver} sensors={sensors}>
             {
                 lists?.map(list => (
-                    <List list={list} key={list.id}/>
+                    <List list={list} project_id={project_id} key={list.id}/>
                 ))
                 
             }

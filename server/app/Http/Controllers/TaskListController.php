@@ -42,6 +42,28 @@ class TaskListController extends Controller
         ]);
     }
 
+    public function update(Request $request, $projectId, $listId)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $project = Project::whereHas('users', fn ($q) => $q->where('users.id', Auth::id()))
+                        ->findOrFail($projectId);
+
+        $list = $project->lists()->where('id', $listId)->firstOrFail();
+
+        $list->title = $request->title;
+        $list->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Task list title updated successfully',
+            'list' => $list
+        ]);
+    }
+
+
     public function destroy($projectId, $listId)
     {
         $project = Project::whereHas('users', fn ($q) => $q->where('users.id', Auth::id()))
